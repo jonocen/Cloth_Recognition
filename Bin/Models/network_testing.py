@@ -1,7 +1,8 @@
 import torch
 import numpy as np
 import torchvision
-
+import random
+import matplotlib.pyplot as plt
 
 # Check if CUDA is available
 if torch.cuda.is_available():
@@ -49,21 +50,32 @@ class NETWORK(torch.nn.Module):
 
 # Instantiate the model and load the weights
 model = NETWORK().to(device=device)
-model.load_state_dict(torch.load('MODEL.pth', weights_only=False))
-
-# Get a sample from the dataset
-x, y = dataset[3]
-x = x.to(device) 
+model.load_state_dict(torch.load('MODEL.pth', weights_only=True))
 
 # Set the model to evaluation mode
 model.eval()
 
-# Make a prediction
-output = model(x.unsqueeze(0))  
+# Number of samples to process
+num_samples = 12
 
-# Get the predicted class
-predicted_class = torch.argmax(output, dim=1).item() 
+# Loop through the dataset and make predictions
+for i in range(num_samples):
+    numb = random.randrange(1, 1000)
+    x, y = dataset[numb]
+    x = x.to(device)  
 
-# Print the results
-print(f"Model output: {output}, Predicted class: {predicted_class}")
-print(f"True class {y}")
+    # Make a prediction
+    with torch.no_grad(): 
+        output = model(x.unsqueeze(0))  
+
+    # Get the predicted class
+    predicted_class = torch.argmax(output, dim=1).item() 
+
+    # Print the results
+    print(f"Sample {i + 1}:")
+    print(f"Model output: {output}, Predicted class: {predicted_class}, True class: {y}")
+    plt.imshow(x.cpu().numpy().squeeze(), cmap='gray')
+    plt.title(f"Predicted: {predicted_class}, True: {y}")
+    plt.axis('off')  
+    plt.show()  
+    plt.pause(1) 
