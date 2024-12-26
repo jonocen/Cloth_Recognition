@@ -50,4 +50,4 @@ To run this project, you need to have Python and the following libraries install
 You can install the required libraries using pip:
 
 ```bash
-pip install torch torchvision 
+pip install torch torchvision matplotlib
